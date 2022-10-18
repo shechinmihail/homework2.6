@@ -79,4 +79,12 @@ public class Driver<T extends Transport & Competing> {
     public void drive(T transport) {
         System.out.println("Водитель " + fullName + " управляет автомобилем " + transport.getBrand() + " и будет участвовать в заезде!");
     }
+
+    @Override
+    public String toString() {
+        return "Водитель " + fullName +
+                ", водительское удостоверение " + driverLicense +
+                ", водительский стаж " + experience +
+                ", на автомобиле " + transport;
+    }
 }

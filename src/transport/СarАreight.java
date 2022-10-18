@@ -47,6 +47,11 @@ public class СarАreight extends Transport implements Competing {
     }
 
     @Override
+    public void fixTheTransport() {
+        System.out.println("Грузовик" + getBrand() + " " + getModel() + " отремонтирован.");
+    }
+
+    @Override
     public String[] pitStop() {
         return PIT_STOP;
     }

@@ -1,8 +1,13 @@
 package transport;
 
+import java.util.ArrayDeque;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws BussErrorServis {
 
         Car lada = new Car("Lada", "Grande", 1.7, BodyType.SEDAN);
         Car audi = new Car("Audi", "A8 50L TDI quattro", 3.0, BodyType.SEDAN);
@@ -19,34 +24,111 @@ public class Main {
         Bus maz = new Bus("Маз", "GP 3", 4.0, CapacityType.SMALL);
         Bus mercedes = new Bus("Mercedes-Benz", "Super 500", 3.5, CapacityType.BIG);
 
-        printInfo(lada);
-        printInfo(audi);
-        printInfo(bmw);
-        printInfo(hyundai);
-        printInfo(zil);
-        printInfo(kamaz);
-        printInfo(tatra);
-        printInfo(iveco);
-        printInfo(liaz);
-        printInfo(solaris);
-        printInfo(maz);
-        printInfo(mercedes);
+        Driver<Car> ivan = new Driver<Car>("Петров Иван Васильевич", "В", 15, bmw);
+        Driver<Bus> petr = new Driver<Bus>("Иванов Петр Николаевич", "D", 20, maz);
+        Driver<СarАreight> nikolay = new Driver<СarАreight>("Фоменко Николай Иванович", "B", 16, zil);
+        Driver<СarАreight> michael = new Driver<СarАreight>("Михаэль Шумахер", "С", 25, iveco);
 
-        Driver<Car> ivan = new Driver<>("Петров Иван Васильевич", "В", 15, bmw);
-        ivan.drive(bmw);
-        Driver<Bus> petr = new Driver<>("Иванов Петр Николаевич", "D", 20, maz);
-        petr.drive(maz);
-        Driver<СarАreight> nikolay = new Driver<>("Фоменко Николай Иванович", "С", 16, zil);
-        nikolay.drive(zil);
 
-        bmw.printType();
-        maz.printType();
-        zil.printType();
+        bmw.addDriver(ivan);
+        bmw.addDriver(nikolay);
+        maz.addDriver(petr);
+        zil.addDriver(michael);
 
-        diagnostics(
-                lada, audi, bmw, hyundai,
-                zil, kamaz, tatra, iveco,
-                liaz, solaris, maz, mercedes);
+        Sponsor sponsor1 = new Sponsor("Газпром", 10000000);
+        Sponsor sponsor2 = new Sponsor("Роснефть", 100);
+        Sponsor sponsor3 = new Sponsor("Транснефть", 50000);
+
+        bmw.addSponsor(sponsor1);
+        iveco.addSponsor(sponsor2);
+        zil.addSponsor(sponsor3);
+
+        Mechanic<Car> zyzy = new Mechanic<>("Зузу", "Зурабович", "Роснефть");
+        Mechanic<Bus> sasha = new Mechanic<>("Александр", "Абрамович", "Газпром");
+        Mechanic<СarАreight> dizel = new Mechanic<>("Винт", "Дизель", "Транснефть");
+
+        audi.addMechanic(sasha);
+        bmw.addMechanic(sasha);
+        iveco.addMechanic(zyzy);
+        zil.addMechanic(dizel);
+
+        List<Driver<?>> drivers = bmw.getDrivers();
+        for (int i = 0; i < drivers.size(); i++) {
+            System.out.println(drivers.get(i));
+        }
+        var mechanics = bmw.getMechanics();
+        for (int i = 0; i < mechanics.size(); i++) {
+            System.out.println(mechanics.get(i));
+        }
+        var sponsors = bmw.getSponsors();
+        for (int i = 0; i < sponsors.size(); i++) {
+            System.out.println(sponsors.get(i));
+        }
+        ServiceStation serviceStation = new ServiceStation();
+        serviceStation.addTransportOnServiceStation(kamaz);
+        serviceStation.addTransportOnServiceStation(liaz);
+        serviceStation.service();
+
+        Queue<String> queue1 = new ArrayDeque<>(5);
+        Queue<String> queue2 = new ArrayDeque<>(5);
+        for (int i = 0; i < Math.floor(Math.random() * 5); i++) {
+            queue1.offer("Василий" + i);
+        }
+        for (int i = 0; i < Math.floor(Math.random() * 5); i++) {
+            queue2.offer("Михаил" + i);
+        }
+
+        System.out.println(queue1);
+        System.out.println(queue2);
+
+        addStringQueue("Проверка", queue1, queue2);
+
+
+//        nikolay.drive(zil);
+//        printInfo(lada);
+//        printInfo(audi);
+//        printInfo(bmw);
+//        printInfo(hyundai);
+//        printInfo(zil);
+//        printInfo(kamaz);
+//        printInfo(tatra);
+//        printInfo(iveco);
+//        printInfo(liaz);
+//        printInfo(solaris);
+//        printInfo(maz);
+//        printInfo(mercedes);
+//
+//        bmw.printType();
+//        maz.printType();
+//        zil.printType();
+//
+//        diagnostics(
+//                lada, audi, bmw, hyundai,
+//                zil, kamaz, tatra, iveco,
+//                liaz, solaris, maz, mercedes);
+
+
+    }
+
+    static void addStringQueue(String name, Queue<String> queue1, Queue<String> queue2){
+        if (queue1.size() == queue2.size() && queue1.size() == 5){
+            System.out.println("Кто нибудь, позовите Галю!!!");
+            return;
+        }
+        if (queue1.size() < queue2.size()){
+            queue2.add(name);
+        }
+        if (queue1.size() > queue2.size()){
+            queue1.add(name);
+        }
+    }
+
+    static void personIsRemovedFromTheRandomQueue(Queue<String> queue1, Queue<String> queue2){
+        if (Math.random() > 0.5){
+            queue1.poll();
+        }   else {
+            queue2.poll();
+        }
     }
 
     public static void diagnostics(Transport... transports) {
@@ -55,11 +137,11 @@ public class Main {
         }
     }
 
-    public static void passDiagnostics(Transport transport){
+    public static void passDiagnostics(Transport transport) {
         try {
             if (!transport.passDiagnostics())
-            throw new RuntimeException("Транспортное средство " + transport.getBrand() + " " + transport.getModel()
-                    + " не прошел диагностику! Выезжать ОПАСНО!!!");
+                throw new RuntimeException("Транспортное средство " + transport.getBrand() + " " + transport.getModel()
+                        + " не прошел диагностику! Выезжать ОПАСНО!!!");
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

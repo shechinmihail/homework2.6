@@ -68,6 +68,12 @@ public final class Car extends Transport implements Competing {
     public boolean passDiagnostics() {
         return Math.random() > 0.5;
     }
+
+    @Override
+    public void fixTheTransport() {
+        System.out.println("Автомобиль " + getBrand() + " " + getModel() + " починен.");
+    }
+
 }
 
 
